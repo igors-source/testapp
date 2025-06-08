@@ -1,0 +1,28 @@
+name: Docker-IMAGE-CI
+
+on:
+  push:
+    branches:
+      - '*'
+jobs:
+  my_build_job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: check
+        uses: actions/checkout@v4
+
+      - name: Login Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.USER }}
+          password: ${{ secrets.TOKEN }}
+
+      - name: Сборка Docker-образа
+        run: |
+          docker build . --file Dockerfile --tag testapp:latest
+          docker tag testapp:latest ${{ secrets.USER }}/testapp:latest
+
+      - name: Push Docker-образа в Docker Hub
+        run: |
+          docker push ${{ secrets.USER }}/testapp:latest
