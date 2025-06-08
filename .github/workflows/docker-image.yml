@@ -21,7 +21,7 @@ jobs:
       - name: Сборка Docker-образа
         run: |
           docker build . --file Dockerfile --tag testapp:latest
-          docker tag nginx:latest ${{ secrets.USER }}/testapp:latest
+          docker tag testapp:latest ${{ secrets.USER }}/testapp:latest
 
       - name: Push Docker-образа в Docker Hub
         run: |
