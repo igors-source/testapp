@@ -54,24 +54,23 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Проверка кода
+      - name: code check
         uses: actions/checkout@v4
 
-      - name: Установка kubectl
+      - name: install kubectl
         run: |
           curl -LO "https://dl.k8s.io/release/v1.33.0/bin/linux/amd64/kubectl"
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
           kubectl version --client
 
-      - name: Конфигурирование kubectl, развертыввание и деплой
+      - name: push to kuber
         run: |
           echo "${{ secrets.CONFIG }}" > config.yml
           export KUBECONFIG=config.yml
           kubectl config view
           kubectl get nodes
           kubectl get pods --all-namespaces
-          kubectl create deployment nginx --image=igorssource/testapp:1.0.0
-          kubectl rollout status deployment.v1.apps/nginx
+          kubectl set image ds/nginx-app nginx=igorssource/testapp:${{ env.VERSION }} -n application
     env:
       KUBECONFIG: ${{ secrets.CONFIG }}
